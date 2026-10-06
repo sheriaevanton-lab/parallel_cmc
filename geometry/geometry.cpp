@@ -70,6 +70,10 @@ double Domain::intersectionArea(const Box &cell) const {
   const double ymin = std::max(cell.bottom_left.y, _ymin);
   const double ymax = std::min(cell.top_right.y, _ymax);
 
+  if (xmax <= xmin || ymax <= ymin) {
+    return 0.0;
+  }
+
   bool all_points_inside =
       (Domain::contains({xmin, ymin}) && Domain::contains({xmin, ymax}) &&
        Domain::contains({xmax, ymax}) && Domain::contains({xmax, ymin}));
