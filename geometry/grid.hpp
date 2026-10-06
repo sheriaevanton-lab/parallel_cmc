@@ -15,6 +15,8 @@ struct Grid2D {
   int index(int i, int j) const { return i + j * (M + 1); }
   int size() const { return (M + 1) * (N + 1); }
 
+  double getEpsilon() const { return std::max(h1, h2) * std::max(h1, h2); }
+
   Grid2D(Config config) {
     this->M = config.M;
     this->N = config.N;

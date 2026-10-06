@@ -3,4 +3,6 @@
 struct Config {
   int M, N;
   double xmin, xmax, ymin, ymax;
+  double delta;
+  int max_iter;
 };
