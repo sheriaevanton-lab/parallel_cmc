@@ -1,5 +1,5 @@
 CXX      := g++
-CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Igeometry
+CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Igeometry -Iproblem_data
 LDFLAGS  :=
 
 SRCS := main.cpp geometry/geometry.cpp geometry/utils.cpp problem_data/problem_data.cpp

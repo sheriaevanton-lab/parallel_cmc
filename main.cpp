@@ -1,7 +1,8 @@
 #include "config.hpp"
 #include "geometry.hpp"
 #include "grid.hpp"
-#include <iostream>
+#include "problem_data.hpp"
+#include <cstdio>
 
 using namespace std;
 
@@ -26,8 +27,17 @@ int main(void) {
     }
   }
 
-  std::cout << "S_ij sum = " << total << std::endl;
-  std::cout << "pi/2 = " << 0.5 * M_PI << std::endl;
+  std::printf("S_ij sum = %g\n", total);
+  std::printf("pi / 2   = %g\n", M_PI_2);
+
+  ProblemData problem(grid, domain);
+
+  std::printf("M x N    = %d x %d\n", problem.M, problem.N);
+  std::printf("h1, h2   = %.3e, %.3e\n", problem.h1, problem.h2);
+  std::printf("eps      = %.3e\n", problem.eps);
+  std::printf("size     = %zu\n", problem.size());
+  std::printf("Q[0]     = %.6e\n", problem.Q[0]);
+  std::printf("B[0]     = %.6e\n", problem.B[0]);
 
   return 0;
 }
