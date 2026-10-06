@@ -9,6 +9,9 @@ struct Grid2D {
   double x(int i) const { return xmin + i * h1; }
   double y(int j) const { return ymin + j * h2; }
 
+  double xHalf(int i) const { return xmin + (i + 0.5) * h1; }
+  double yHalf(int j) const { return ymin + (j + 0.5) * h2; }
+
   int index(int i, int j) const { return i + j * (M + 1); }
   int size() const { return (M + 1) * (N + 1); }
 
