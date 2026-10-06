@@ -19,7 +19,7 @@ public:
   std::vector<double> v0;
   std::vector<double> B;
 
-  int idx(int i, int j) const { return (i - 1) + (j - 1) * (M - 1); }
+  int index(int i, int j) const { return (i - 1) + (j - 1) * (M - 1); }
 
   std::size_t size() const { return Q.size(); }
 
