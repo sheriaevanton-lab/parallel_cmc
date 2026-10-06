@@ -1,4 +1,5 @@
 #pragma once
+
 #include "config.hpp"
 #include <cmath>
 #include <vector>

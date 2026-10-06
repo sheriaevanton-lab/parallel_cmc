@@ -1,8 +1,8 @@
 CXX      := g++
-CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Igeometry -Iproblem_data -Isolvers
+CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Igeometry -Iutils -Iproblem_data
 LDFLAGS  :=
 
-SRCS := main.cpp geometry/geometry.cpp geometry/utils.cpp problem_data/problem_data.cpp solvers/utils.cpp
+SRCS := main.cpp geometry/geometry.cpp utils/utils.cpp problem_data/problem_data.cpp
 BIN  := solver
 
 all: $(BIN)
