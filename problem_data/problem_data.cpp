@@ -33,4 +33,18 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
       B[k] = F[k] + Q[k] * v0[k];
     }
   }
+
+  v0_bottom.assign(M + 1, 0.0);
+  v0_top.assign(M + 1, 0.0);
+  v0_left.assign(N + 1, 0.0);
+  v0_right.assign(N + 1, 0.0);
+
+  for (int i = 0; i <= M; ++i) {
+    v0_bottom[i] = domain.v0({grid.x(i), grid.y(0)});
+    v0_top[i] = domain.v0({grid.x(i), grid.y(N)});
+  }
+  for (int j = 0; j <= N; ++j) {
+    v0_left[j] = domain.v0({grid.x(0), grid.y(j)});
+    v0_right[j] = domain.v0({grid.x(M), grid.y(j)});
+  }
 }
