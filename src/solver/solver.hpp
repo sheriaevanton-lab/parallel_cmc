@@ -1,6 +1,6 @@
 #pragma once
 
-#include "backend.hpp"
+#include "backend/backend.hpp"
 #include <vector>
 
 class ConjugateGradient {

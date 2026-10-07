@@ -1,9 +1,9 @@
 #include "config.hpp"
-#include "geometry.hpp"
-#include "grid.hpp"
-#include "problem_data.hpp"
-#include "sequential.hpp"
-#include "solver.hpp"
+#include "geometry/geometry.hpp"
+#include "geometry/grid.hpp"
+#include "problem_data/problem_data.hpp"
+#include "backend/sequential.hpp"
+#include "solver/solver.hpp"
 #include <cstdio>
 
 int main(void) {

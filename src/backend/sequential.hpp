@@ -1,7 +1,7 @@
 #pragma once
 
 #include "backend.hpp"
-#include "problem_data.hpp"
+#include "problem_data/problem_data.hpp"
 
 class SequentialBackend : public Backend {
   const ProblemData &problem;

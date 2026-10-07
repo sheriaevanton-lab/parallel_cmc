@@ -1,8 +1,8 @@
 #pragma once
 
 #include "config.hpp"
-#include "geometry.hpp"
-#include "grid.hpp"
+#include "geometry/geometry.hpp"
+#include "geometry/grid.hpp"
 
 #include <vector>
 

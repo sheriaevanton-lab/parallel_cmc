@@ -1,16 +1,26 @@
 CXX      := g++
-CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Igeometry -Iutils -Iproblem_data -Isequential -I solver
+CXXFLAGS := -O2 -std=c++17 -Wall -Wextra -I. -Isrc -MMD -MP
 LDFLAGS  :=
 
-SRCS := main.cpp geometry/geometry.cpp utils/utils.cpp problem_data/problem_data.cpp solver/sequential.cpp solver/solver.cpp
-BIN  := prog
+SRCS := $(shell find src -name '*.cpp') main.cpp
+OBJ_DIR := build
+OBJS := $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+DEPS := $(OBJS:.o=.d)
+
+BIN := prog
 
 all: $(BIN)
 
-$(BIN): $(SRCS)
-	$(CXX) $(CXXFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS)
+$(BIN): $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+-include $(DEPS)
 
 clean:
-	rm -f $(BIN)
+	rm -rf $(OBJ_DIR) $(BIN)
 
 .PHONY: all clean
