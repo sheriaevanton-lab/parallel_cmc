@@ -6,9 +6,9 @@ ProblemData::ProblemData(const Grid2D &grid, const Domain &domain)
 }
 
 void ProblemData::build(const Grid2D &grid, const Domain &domain) {
-  const int nx = M - 1;
-  const int ny = N - 1;
-  const std::size_t n = static_cast<std::size_t>(nx) * ny;
+  const std::size_t nx = M - 1;
+  const std::size_t ny = N - 1;
+  const std::size_t n = nx * ny;
 
   Q.assign(n, 0.0);
   F.assign(n, 0.0);
@@ -19,8 +19,8 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
   const double inv_cell_area = 1.0 / cell_area;
   const double inv_eps2 = 1.0 / (eps * eps);
 
-  for (int j = 1; j <= N - 1; ++j) {
-    for (int i = 1; i <= M - 1; ++i) {
+  for (std::size_t j = 1; j <= ny; ++j) {
+    for (std::size_t i = 1; i <= nx; ++i) {
       Box cell = {{grid.xHalf(i - 1), grid.yHalf(j - 1)},
                   {grid.xHalf(i), grid.yHalf(j)}};
 
@@ -39,11 +39,11 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
   v0_left.assign(N + 1, 0.0);
   v0_right.assign(N + 1, 0.0);
 
-  for (int i = 0; i <= M; ++i) {
+  for (std::size_t i = 0; i <= M; ++i) {
     v0_bottom[i] = domain.v0({grid.x(i), grid.y(0)});
     v0_top[i] = domain.v0({grid.x(i), grid.y(N)});
   }
-  for (int j = 0; j <= N; ++j) {
+  for (std::size_t j = 0; j <= N; ++j) {
     v0_left[j] = domain.v0({grid.x(0), grid.y(j)});
     v0_right[j] = domain.v0({grid.x(M), grid.y(j)});
   }

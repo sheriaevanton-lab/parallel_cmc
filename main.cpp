@@ -20,8 +20,8 @@ int main(void) {
 
   double total = 0.0;
 
-  for (int i = 0; i < grid.M; ++i) {
-    for (int j = 0; j < grid.N; ++j) {
+  for (std::size_t i = 0; i < grid.M; ++i) {
+    for (std::size_t j = 0; j < grid.N; ++j) {
       Box cell = {{grid.x(i), grid.y(j)}, {grid.x(i + 1), grid.y(j + 1)}};
       total += domain.intersectionArea(cell);
     }
@@ -32,7 +32,7 @@ int main(void) {
 
   ProblemData problem(grid, domain);
 
-  std::printf("M x N    = %d x %d\n", problem.M, problem.N);
+  std::printf("M x N    = %ld x %ld\n", problem.M, problem.N);
   std::printf("h1, h2   = %.3e, %.3e\n", problem.h1, problem.h2);
   std::printf("eps      = %.3e\n", problem.eps);
   std::printf("size     = %zu\n", problem.size());

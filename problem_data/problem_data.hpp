@@ -10,7 +10,7 @@ class ProblemData {
 public:
   ProblemData(const Grid2D &grid, const Domain &domain);
 
-  int M, N;
+  std::size_t M, N;
   double h1, h2;
   double eps;
 
@@ -24,9 +24,11 @@ public:
   std::vector<double> v0_left;   // i = 0,     j = 0..N
   std::vector<double> v0_right;  // i = M,     j = 0..N
 
-  int index(int i, int j) const { return (i - 1) + (j - 1) * (M - 1); }
+  std::size_t index(std::size_t i, std::size_t j) const {
+    return (i - 1) + (j - 1) * (M - 1);
+  }
 
-  double v0_at(int i, int j) const {
+  double v0_at(std::size_t i, std::size_t j) const {
     if (i == 0)
       return v0_left[j];
     if (i == M)

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <cstddef>
+
 struct Config {
-  int M, N;
+  std::size_t M, N;
   double xmin, xmax, ymin, ymax;
   double delta;
-  int max_iter;
+  std::size_t max_iter;
 };

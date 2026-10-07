@@ -3,18 +3,20 @@
 #include "config.hpp"
 
 struct Grid2D {
-  int M, N;
+  std::size_t M, N;
   double xmin, ymin;
   double h1, h2;
 
-  double x(int i) const { return xmin + i * h1; }
-  double y(int j) const { return ymin + j * h2; }
+  double x(std::size_t i) const { return xmin + i * h1; }
+  double y(std::size_t j) const { return ymin + j * h2; }
 
-  double xHalf(int i) const { return xmin + (i + 0.5) * h1; }
-  double yHalf(int j) const { return ymin + (j + 0.5) * h2; }
+  double xHalf(std::size_t i) const { return xmin + (i + 0.5) * h1; }
+  double yHalf(std::size_t j) const { return ymin + (j + 0.5) * h2; }
 
-  int index(int i, int j) const { return i + j * (M + 1); }
-  int size() const { return (M + 1) * (N + 1); }
+  std::size_t index(std::size_t i, std::size_t j) const {
+    return i + j * (M + 1);
+  }
+  std::size_t size() const { return (M + 1) * (N + 1); }
 
   double getEpsilon() const { return std::max(h1, h2) * std::max(h1, h2); }
 
