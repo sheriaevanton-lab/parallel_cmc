@@ -31,17 +31,10 @@ void SequentialBackend::applyOperator(const std::vector<double> &w,
 
       const double wc = w[k];
 
-      const double wl =
-          (i > 1) ? w[problem.index(i - 1, j)] : problem.v0_at(i - 1, j);
-
-      const double wr =
-          (i < M - 1) ? w[problem.index(i + 1, j)] : problem.v0_at(i + 1, j);
-
-      const double wd =
-          (j > 1) ? w[problem.index(i, j - 1)] : problem.v0_at(i, j - 1);
-
-      const double wu =
-          (j < N - 1) ? w[problem.index(i, j + 1)] : problem.v0_at(i, j + 1);
+      const double wl = (i > 1) ? w[problem.index(i - 1, j)] : 0.0;
+      const double wr = (i < M - 1) ? w[problem.index(i + 1, j)] : 0.0;
+      const double wd = (j > 1) ? w[problem.index(i, j - 1)] : 0.0;
+      const double wu = (j < N - 1) ? w[problem.index(i, j + 1)] : 0.0;
 
       Aw[k] = -(wl - 2.0 * wc + wr) * inv_h1_2 -
               (wd - 2.0 * wc + wu) * inv_h2_2 + problem.Q[k] * wc;

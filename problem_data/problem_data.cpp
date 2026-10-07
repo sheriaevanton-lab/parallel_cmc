@@ -18,21 +18,8 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
   const double cell_area = h1 * h2;
   const double inv_cell_area = 1.0 / cell_area;
   const double inv_eps2 = 1.0 / (eps * eps);
-
-  for (std::size_t j = 1; j <= ny; ++j) {
-    for (std::size_t i = 1; i <= nx; ++i) {
-      Box cell = {{grid.xHalf(i - 1), grid.yHalf(j - 1)},
-                  {grid.xHalf(i), grid.yHalf(j)}};
-
-      const double S = domain.intersectionArea(cell);
-
-      const std::size_t k = index(i, j);
-      Q[k] = (cell_area - S) * inv_cell_area * inv_eps2;
-      F[k] = S * inv_cell_area;
-      v0[k] = domain.v0({grid.x(i), grid.y(j)});
-      B[k] = F[k] + Q[k] * v0[k];
-    }
-  }
+  const double inv_h1_2 = 1.0 / (h1 * h1);
+  const double inv_h2_2 = 1.0 / (h2 * h2);
 
   v0_bottom.assign(M + 1, 0.0);
   v0_top.assign(M + 1, 0.0);
@@ -46,5 +33,28 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
   for (std::size_t j = 0; j <= N; ++j) {
     v0_left[j] = domain.v0({grid.x(0), grid.y(j)});
     v0_right[j] = domain.v0({grid.x(M), grid.y(j)});
+  }
+
+  for (std::size_t j = 1; j <= ny; ++j) {
+    for (std::size_t i = 1; i <= nx; ++i) {
+      Box cell = {{grid.xHalf(i - 1), grid.yHalf(j - 1)},
+                  {grid.xHalf(i), grid.yHalf(j)}};
+
+      const double S = domain.intersectionArea(cell);
+
+      const std::size_t k = index(i, j);
+      Q[k] = (cell_area - S) * inv_cell_area * inv_eps2;
+      F[k] = S * inv_cell_area;
+      v0[k] = domain.v0({grid.x(i), grid.y(j)});
+      B[k] = F[k] + Q[k] * v0[k];
+      if (i == 1)
+        B[k] += v0_at(0, j) * inv_h1_2;
+      if (i == M - 1)
+        B[k] += v0_at(M, j) * inv_h1_2;
+      if (j == 1)
+        B[k] += v0_at(i, 0) * inv_h2_2;
+      if (j == N - 1)
+        B[k] += v0_at(i, N) * inv_h2_2;
+    }
   }
 }

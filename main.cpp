@@ -2,14 +2,14 @@
 #include "geometry.hpp"
 #include "grid.hpp"
 #include "problem_data.hpp"
-#include "solver.hpp"
 #include "sequential.hpp"
+#include "solver.hpp"
 #include <cstdio>
 
 int main(void) {
   Config config;
-  config.M = 400;
-  config.N = 400;
+  config.M = 20;
+  config.N = 20;
   config.xmin = -1.1;
   config.xmax = 1.1;
   config.ymin = -0.1;
