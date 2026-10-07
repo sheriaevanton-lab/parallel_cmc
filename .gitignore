@@ -69,3 +69,8 @@ Testing/
 
 # vscode tmp
 .vscode
+
+# py files
+tools/.venv/
+__pycache__/
+*.pyc
