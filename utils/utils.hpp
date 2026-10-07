@@ -1,5 +1,4 @@
 #pragma once
-#include "problem_data.hpp"
 #include <vector>
 
 namespace utils {

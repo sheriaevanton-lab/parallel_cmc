@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include <algorithm>
 
 struct Grid2D {
   std::size_t M, N;

@@ -26,7 +26,7 @@ void ProblemData::build(const Grid2D &grid, const Domain &domain) {
 
       const double S = domain.intersectionArea(cell);
 
-      const int k = index(i, j);
+      const std::size_t k = index(i, j);
       Q[k] = (cell_area - S) * inv_cell_area * inv_eps2;
       F[k] = S * inv_cell_area;
       v0[k] = domain.v0({grid.x(i), grid.y(j)});

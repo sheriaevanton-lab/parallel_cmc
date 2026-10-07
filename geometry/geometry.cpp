@@ -89,12 +89,13 @@ double Domain::intersectionArea(const Box &cell) const {
                [](Point point) { return insideUnitCircle(point); });
 
   auto vertices_size = vertices.size();
-  for (unsigned int i = 0; i < vertices_size - 1; ++i) {
+  for (std::size_t i = 0; i < vertices_size - 1; ++i) {
     intersectSegmentAndUnitCircle(vertices[i], vertices[i + 1], poly);
   }
   intersectSegmentAndUnitCircle(vertices[0], vertices[vertices_size - 1], poly);
 
   dedup(poly);
+  if (poly.size() < 3) return 0.0;
 
   auto center = std::accumulate(poly.begin(), poly.end(), Point{0, 0});
   center = center * (1.0 / static_cast<double>(poly.size()));
