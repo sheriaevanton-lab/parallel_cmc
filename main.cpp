@@ -1,3 +1,4 @@
+#include "backend/openmp.hpp"
 #include "backend/sequential.hpp"
 #include "config.hpp"
 #include "geometry/geometry.hpp"
@@ -21,6 +22,9 @@ int main(int argc, char *argv[]) {
     switch (config.backend) {
     case BackendKind::Sequential:
       backend = std::make_unique<SequentialBackend>(problem);
+      break;
+    case BackendKind::OpenMP:
+      backend = std::make_unique<OpenMPBackend>(problem);
       break;
     }
     const auto solver = ConjugateGradient(*backend);
