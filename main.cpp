@@ -39,11 +39,13 @@ int main(int argc, char *argv[]) {
     }
     const auto solver = ConjugateGradient(*backend);
 
-    std::vector<double> w((problem.M - 1) * (problem.N - 1));
+    std::vector<double> w(problem.size(), 0);
     const auto t0 = std::chrono::steady_clock::now();
     const auto result =
         solver.solve(problem.B, w, config.delta, config.max_iter);
-    const auto t1 = std::chrono::steady_clock::now();
+    const auto t1 =
+        std::chrono::steady_clock::now(); // NB: this is the time for each
+                                          // process, rewrite it using MPI!!!
 
     const double seconds = std::chrono::duration<double>(t1 - t0).count();
     if (rank == 0) {
@@ -52,8 +54,8 @@ int main(int argc, char *argv[]) {
                 << "delta_w_norm: " << result.residual << std::endl
                 << "iterations: " << result.iterations << std::endl
                 << "time: " << seconds << std::endl;
+      utils::saveSolutionCsv(config.output_path, w, grid, domain);
     }
-    utils::saveSolutionCsv(config.output_path, w, grid, domain);
   } catch (const std::exception &e) {
     if (rank == 0) {
       std::cerr << "error: " << e.what() << "\n";
