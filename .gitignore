@@ -74,3 +74,6 @@ Testing/
 tools/.venv/
 __pycache__/
 *.pyc
+
+# computation results
+*.csv
