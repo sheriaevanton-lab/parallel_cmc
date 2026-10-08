@@ -1,6 +1,6 @@
+#include "backend/mpi.hpp"
 #include "backend/openmp.hpp"
 #include "backend/sequential.hpp"
-#include "backend/mpi.hpp"
 #include "config.hpp"
 #include "geometry/geometry.hpp"
 #include "geometry/grid.hpp"
@@ -10,8 +10,14 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <mpi.h>
 
 int main(int argc, char *argv[]) {
+  MPI_Init(&argc, &argv);
+  int rank = 0;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  int exec_code = 0;
   try {
     auto config = utils::parseArgs(argc, argv);
     Grid2D grid(config);
@@ -40,15 +46,20 @@ int main(int argc, char *argv[]) {
     const auto t1 = std::chrono::steady_clock::now();
 
     const double seconds = std::chrono::duration<double>(t1 - t0).count();
-    std::cout << (result.converged ? "converged" : "failed to converge")
-              << std::endl
-              << "delta_w_norm: " << result.residual << std::endl
-              << "iterations: " << result.iterations << std::endl
-              << "time: " << seconds << std::endl;
+    if (rank == 0) {
+      std::cout << (result.converged ? "converged" : "failed to converge")
+                << std::endl
+                << "delta_w_norm: " << result.residual << std::endl
+                << "iterations: " << result.iterations << std::endl
+                << "time: " << seconds << std::endl;
+    }
     utils::saveSolutionCsv(config.output_path, w, grid, domain);
   } catch (const std::exception &e) {
-    std::cerr << "error: " << e.what() << "\n";
-    return 1;
+    if (rank == 0) {
+      std::cerr << "error: " << e.what() << "\n";
+    }
+    exec_code = 1;
   }
-  return 0;
+  MPI_Finalize();
+  return exec_code;
 }

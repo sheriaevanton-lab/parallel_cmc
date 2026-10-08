@@ -3,7 +3,7 @@
 MPIBackend::MPIBackend(const ProblemData &p) : problem(p) {}
 
 double MPIBackend::dot(const std::vector<double> &u,
-                              const std::vector<double> &v) const {
+                       const std::vector<double> &v) const {
   const double weight = problem.h1 * problem.h2;
   double s = 0.0;
   for (std::size_t k = 0; k < u.size(); ++k)
@@ -12,14 +12,14 @@ double MPIBackend::dot(const std::vector<double> &u,
 }
 
 void MPIBackend::axpy(double a, const std::vector<double> &x,
-                             std::vector<double> &y) const {
+                      std::vector<double> &y) const {
   for (std::size_t i = 0; i < x.size(); ++i) {
     y[i] += a * x[i];
   }
 }
 
 void MPIBackend::applyOperator(const std::vector<double> &w,
-                                      std::vector<double> &Aw) const {
+                               std::vector<double> &Aw) const {
   const std::size_t M = problem.M;
   const std::size_t N = problem.N;
   const double inv_h1_2 = 1.0 / (problem.h1 * problem.h1);
@@ -43,7 +43,7 @@ void MPIBackend::applyOperator(const std::vector<double> &w,
 }
 
 void MPIBackend::applyPreconditioner(const std::vector<double> &r,
-                                            std::vector<double> &z) const {
+                                     std::vector<double> &z) const {
   const double inv_h1_2 = 1.0 / (problem.h1 * problem.h1);
   const double inv_h2_2 = 1.0 / (problem.h2 * problem.h2);
 
