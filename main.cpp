@@ -1,5 +1,6 @@
 #include "backend/openmp.hpp"
 #include "backend/sequential.hpp"
+#include "backend/mpi.hpp"
 #include "config.hpp"
 #include "geometry/geometry.hpp"
 #include "geometry/grid.hpp"
@@ -25,6 +26,9 @@ int main(int argc, char *argv[]) {
       break;
     case BackendKind::OpenMP:
       backend = std::make_unique<OpenMPBackend>(problem);
+      break;
+    case BackendKind::MPI:
+      backend = std::make_unique<MPIBackend>(problem);
       break;
     }
     const auto solver = ConjugateGradient(*backend);
