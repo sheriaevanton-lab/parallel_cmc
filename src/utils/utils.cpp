@@ -10,17 +10,17 @@
 namespace utils {
 
 namespace {
-  constexpr std::size_t kM = 20;
-  constexpr std::size_t kN = 20;
-  constexpr double kDefaultXMin = -1.1;
-  constexpr double kDefaultXMax = 1.1;
-  constexpr double kDefaultYMin = -0.1;
-  constexpr double kDefaultYMax = 1.1;
-  constexpr double kDelta = 1e-5;
-  constexpr double kMaxIter = 1000;
-  constexpr int kPrecision = 17;
-  const auto kDefaultBackend = BackendKind::Sequential;
-  const auto kDefaultPath = "./solution.csv"; 
+constexpr std::size_t kM = 20;
+constexpr std::size_t kN = 20;
+constexpr double kDefaultXMin = -1.1;
+constexpr double kDefaultXMax = 1.1;
+constexpr double kDefaultYMin = -0.1;
+constexpr double kDefaultYMax = 1.1;
+constexpr double kDelta = 1e-5;
+constexpr double kMaxIter = 1000;
+constexpr int kPrecision = 17;
+const auto kDefaultBackend = BackendKind::Sequential;
+const auto kDefaultPath = "./solution.csv";
 } // namespace
 
 std::vector<double> solveQuadraticInUnitSegment(double a, double b, double c) {
