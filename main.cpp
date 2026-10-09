@@ -13,6 +13,8 @@
 #include <mpi.h>
 
 int main(int argc, char *argv[]) {
+  double t0, t1, local_elapsed, max_elapsed;
+
   MPI_Init(&argc, &argv);
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -40,20 +42,21 @@ int main(int argc, char *argv[]) {
     const auto solver = ConjugateGradient(*backend);
 
     std::vector<double> w(problem.size(), 0);
-    const auto t0 = std::chrono::steady_clock::now();
+    MPI_Barrier(MPI_COMM_WORLD);
+    t0 = MPI_Wtime();
     const auto result =
         solver.solve(problem.B, w, config.delta, config.max_iter);
-    const auto t1 =
-        std::chrono::steady_clock::now(); // NB: this is the time for each
-                                          // process, rewrite it using MPI!!!
+    t1 = MPI_Wtime();
+    local_elapsed = t1 - t0;
+    MPI_Reduce(&local_elapsed, &max_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0,
+               MPI_COMM_WORLD);
 
-    const double seconds = std::chrono::duration<double>(t1 - t0).count();
     if (rank == 0) {
       std::cout << (result.converged ? "converged" : "failed to converge")
                 << std::endl
                 << "delta_w_norm: " << result.residual << std::endl
                 << "iterations: " << result.iterations << std::endl
-                << "time: " << seconds << std::endl;
+                << "time: " << max_elapsed << std::endl;
       utils::saveSolutionCsv(config.output_path, w, grid, domain);
     }
   } catch (const std::exception &e) {
