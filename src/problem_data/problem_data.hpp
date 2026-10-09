@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.hpp"
+#include "decomposition.hpp"
 #include "geometry/geometry.hpp"
 #include "geometry/grid.hpp"
 
@@ -9,6 +9,8 @@
 class ProblemData {
 public:
   ProblemData(const Grid2D &grid, const Domain &domain);
+  ProblemData(const Grid2D &grid, const Domain &domain,
+              const LocalGeometry &lg);
 
   std::size_t M, N;
   double h1, h2;

@@ -1,13 +1,16 @@
 #pragma once
 
 #include "backend.hpp"
+#include "problem_data/decomposition.hpp"
 #include "problem_data/problem_data.hpp"
+#include <mpi.h>
 
 class MPIBackend : public Backend {
   const ProblemData &problem;
 
 public:
-  explicit MPIBackend(const ProblemData &p);
+  explicit MPIBackend(const ProblemData &p, const LocalGeometry &lg,
+                      MPI_Comm comm);
 
   double dot(const std::vector<double> &u,
              const std::vector<double> &v) const override;

@@ -1,6 +1,8 @@
 #include "mpi.hpp"
 
-MPIBackend::MPIBackend(const ProblemData &p) : problem(p) {}
+MPIBackend::MPIBackend(const ProblemData &p, const LocalGeometry &lg,
+                       MPI_Comm comm)
+    : problem(p) {}
 
 double MPIBackend::dot(const std::vector<double> &u,
                        const std::vector<double> &v) const {
