@@ -66,8 +66,6 @@ std::vector<double> solveQuadraticInUnitSegment(double a, double b, double c) {
   return roots;
 }
 
-void fail(const std::string &msg) { throw std::runtime_error(msg); }
-
 Config parseArgs(int argc, char *argv[]) {
   Config config;
   config.M = kM;
@@ -85,7 +83,7 @@ Config parseArgs(int argc, char *argv[]) {
     std::string key = argv[i];
     auto next = [&]() -> std::string {
       if (i + 1 >= argc)
-        fail("missing value for " + key);
+        throw std::runtime_error("missing value for " + key);
       return argv[++i];
     };
 
@@ -119,7 +117,7 @@ Config parseArgs(int argc, char *argv[]) {
                    "  -o, --output <file>\n";
       std::exit(0);
     } else
-      fail("unknown option: " + key);
+      throw std::runtime_error("unknown option: " + key);
   }
 
   return config;
@@ -129,7 +127,7 @@ void saveSolutionCsv(const std::string &path, const std::vector<double> &w,
                      const Grid2D &grid, const Domain &domain) {
   std::ofstream out(path);
   if (!out)
-    fail("cannot open " + path);
+    throw std::runtime_error("cannot open " + path);
 
   out << std::setprecision(kPrecision);
   out << "x,y,w\n";
