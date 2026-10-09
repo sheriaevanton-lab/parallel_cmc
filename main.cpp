@@ -13,8 +13,6 @@
 #include <mpi.h>
 
 int main(int argc, char *argv[]) {
-  double t0, t1, local_elapsed, max_elapsed;
-
   MPI_Init(&argc, &argv);
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -43,11 +41,13 @@ int main(int argc, char *argv[]) {
 
     std::vector<double> w(problem.size(), 0);
     MPI_Barrier(MPI_COMM_WORLD);
-    t0 = MPI_Wtime();
+    const double t0 = MPI_Wtime();
     const auto result =
         solver.solve(problem.B, w, config.delta, config.max_iter);
-    t1 = MPI_Wtime();
-    local_elapsed = t1 - t0;
+    MPI_Barrier(MPI_COMM_WORLD);
+    const double t1 = MPI_Wtime();
+    const double local_elapsed = t1 - t0;
+    double max_elapsed = 0.0;
     MPI_Reduce(&local_elapsed, &max_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0,
                MPI_COMM_WORLD);
 
