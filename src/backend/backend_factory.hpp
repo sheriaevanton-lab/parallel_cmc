@@ -4,9 +4,7 @@
 #include "sequential.hpp"
 #include <memory>
 #include <mpi.h>
-#include <optional>
 #include <stdexcept>
-#include <string>
 
 inline std::unique_ptr<Backend> makeBackend(BackendKind kind,
                                             ProblemData &problem,

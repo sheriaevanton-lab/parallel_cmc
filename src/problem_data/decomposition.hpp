@@ -2,7 +2,7 @@
 #include <string>
 
 struct Decomposition {
-  int px, py;
+  std::size_t px, py;
 };
 
 Decomposition make_decomposition(std::size_t M, std::size_t N, int num_proc);
