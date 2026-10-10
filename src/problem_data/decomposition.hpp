@@ -2,13 +2,10 @@
 #include <string>
 
 struct Decomposition {
-  std::size_t px, py;
-  std::size_t P_eff;
-  std::size_t local_nx, local_ny;
-  std::size_t offset_x, offset_y;
+  int px, py;
 };
 
-Decomposition make_decomposition(std::size_t M, std::size_t N, int size);
+Decomposition make_decomposition(std::size_t M, std::size_t N, int num_proc);
 
 struct LocalGeometry {
   int rank;
