@@ -9,5 +9,5 @@ struct Config {
   double delta;
   int max_iter;
   std::string output_path;
-  std::optional<BackendKind> backend;
+  BackendKind backend;
 };

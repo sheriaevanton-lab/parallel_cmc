@@ -24,9 +24,7 @@ int main(int argc, char *argv[]) {
     std::unique_ptr<Decomposition> dec;
     std::unique_ptr<LocalGeometry> lg;
 
-    if (!config.backend.has_value()) {
-      throw std::runtime_error("unknown backend type");
-    } else if (*config.backend == BackendKind::MPI) {
+    if (config.backend == BackendKind::MPI) {
       dec = std::make_unique<Decomposition>(
           make_decomposition(config.M, config.N, num_procs));
       lg = std::make_unique<LocalGeometry>(
@@ -35,8 +33,7 @@ int main(int argc, char *argv[]) {
       problem = std::make_unique<ProblemData>(grid, domain);
     }
 
-    backend = makeBackend(config.backend, *problem, dec.get(), lg.get(),
-                          MPI_COMM_WORLD);
+    backend = makeBackend(config.backend, *problem, lg.get(), MPI_COMM_WORLD);
     const auto solver = ConjugateGradient(*backend);
 
     std::vector<double> w(problem->size(), 0);

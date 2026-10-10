@@ -89,7 +89,10 @@ Config parseArgs(int argc, char *argv[]) {
 
     if (key == "--backend" || key == "-b") {
       auto k = parseBackendKind(next());
-      config.backend = k;
+      if (!k.has_value()) {
+        throw std::runtime_error("unknown backend type");
+      }
+      config.backend = *k;
     } else if (key == "--M")
       config.M = std::stoi(next());
     else if (key == "--N")
