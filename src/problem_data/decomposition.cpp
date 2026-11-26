@@ -1,56 +1,42 @@
 #include "decomposition.hpp"
+#include <algorithm>
 #include <limits>
 #include <stdexcept>
 
 Decomposition make_decomposition(std::size_t M, std::size_t N, int num_proc) {
-  if (num_proc & (num_proc - 1)) {
+  if (num_proc <= 0 || (num_proc & (num_proc - 1))) {
     throw std::runtime_error("number of processes has to be a power of two");
   }
+  if (M < 2 || N < 2) {
+    throw std::runtime_error("M and N must be at least 2");
+  }
 
-  Decomposition decomp;
+  Decomposition decomp{};
   const std::size_t Kx = M - 1;
   const std::size_t Ky = N - 1;
   const std::size_t size = static_cast<std::size_t>(num_proc);
   double best_score = std::numeric_limits<double>::infinity();
 
-  bool found = false;
-
-  for (std::size_t px = 1; px <= size; ++px) {
-    if (size % px)
+  for (std::size_t px = 1; px <= size; px *= 2) {
+    const std::size_t py = size / px;
+    if (px > Kx || py > Ky)
       continue;
 
-    std::size_t py = size / px;
+    const std::size_t nx_min = Kx / px;
+    const std::size_t nx_max = nx_min + (Kx % px != 0);
+    const std::size_t ny_min = Ky / py;
+    const std::size_t ny_max = ny_min + (Ky % py != 0);
+    const double score = std::max(static_cast<double>(nx_max) / ny_min,
+                                  static_cast<double>(ny_max) / nx_min);
 
-    std::size_t sx_base = Kx / px, sx_rem = Kx % px;
-    std::size_t sy_base = Ky / py, sy_rem = Ky % py;
-
-    std::size_t nx_min = sx_base;
-    std::size_t nx_max = sx_base + (sx_rem > 0 ? 1 : 0);
-    std::size_t ny_min = sy_base;
-    std::size_t ny_max = sy_base + (sy_rem > 0 ? 1 : 0);
-
-    double ratio_max = double(nx_max) / double(ny_min);
-    double ratio_min = double(nx_min) / double(ny_max);
-
-    if (ratio_min < 0.5 || ratio_max > 2.0)
-      continue;
-
-    double score = std::max(ratio_max, 1.0 / ratio_min);
-
-    if (!found || score < best_score) {
+    if (score < best_score) {
       best_score = score;
       decomp = {px, py};
-      found = true;
     }
   }
 
-  if (!found) {
-    std::size_t px = 1;
-    for (std::size_t d = 1; d * d <= size; ++d)
-      if (size % d == 0)
-        px = d;
-    std::size_t py = size / px;
-    decomp = {px, py};
+  if (decomp.px == 0) {
+    throw std::runtime_error("process grid would contain empty blocks");
   }
 
   return decomp;
@@ -58,6 +44,21 @@ Decomposition make_decomposition(std::size_t M, std::size_t N, int num_proc) {
 
 LocalGeometry make_local_geometry(const Decomposition &d, int rank,
                                   std::size_t M, std::size_t N) {
-  LocalGeometry lg;
-  return lg;
+  const std::size_t x = rank % d.px;
+  const std::size_t y = rank / d.px;
+  const std::size_t nx = (M - 1) / d.px;
+  const std::size_t ny = (N - 1) / d.py;
+  const std::size_t rx = (M - 1) % d.px;
+  const std::size_t ry = (N - 1) % d.py;
+  const int stride = static_cast<int>(d.px);
+
+  return {rank,
+          nx + (x < rx),
+          ny + (y < ry),
+          x * nx + std::min(x, rx),
+          y * ny + std::min(y, ry),
+          x > 0 ? rank - 1 : LocalGeometry::no_neighbor,
+          x + 1 < d.px ? rank + 1 : LocalGeometry::no_neighbor,
+          y > 0 ? rank - stride : LocalGeometry::no_neighbor,
+          y + 1 < d.py ? rank + stride : LocalGeometry::no_neighbor};
 }

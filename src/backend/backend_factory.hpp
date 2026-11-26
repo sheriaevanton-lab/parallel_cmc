@@ -7,8 +7,9 @@
 #include <stdexcept>
 
 inline std::unique_ptr<Backend> makeBackend(BackendKind kind,
-                                            ProblemData &problem,
-                                            LocalGeometry *lg, MPI_Comm comm) {
+                                            const ProblemData &problem,
+                                            const LocalGeometry *lg,
+                                            MPI_Comm comm) {
   switch (kind) {
   case BackendKind::Sequential:
     return std::make_unique<SequentialBackend>(problem);

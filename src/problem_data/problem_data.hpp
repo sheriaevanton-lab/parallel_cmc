@@ -21,29 +21,33 @@ public:
   std::vector<double> v0;
   std::vector<double> B;
 
-  std::vector<double> v0_bottom; // j = 0,     i = 0..M
-  std::vector<double> v0_top;    // j = N,     i = 0..M
-  std::vector<double> v0_left;   // i = 0,     j = 0..N
-  std::vector<double> v0_right;  // i = M,     j = 0..N
+  // Segments of the physical boundary adjacent to this block.
+  std::vector<double> v0_bottom;
+  std::vector<double> v0_top;
+  std::vector<double> v0_left;
+  std::vector<double> v0_right;
 
+  // Map global interior coordinates in this block to a local vector index.
   std::size_t index(std::size_t i, std::size_t j) const {
-    return (i - 1) + (j - 1) * (M - 1);
+    return (i - 1 - offset_x) + (j - 1 - offset_y) * nx;
   }
 
   double v0_at(std::size_t i, std::size_t j) const {
     if (i == 0)
-      return v0_left[j];
+      return v0_left[j - offset_y];
     if (i == M)
-      return v0_right[j];
+      return v0_right[j - offset_y];
     if (j == 0)
-      return v0_bottom[i];
+      return v0_bottom[i - offset_x];
     if (j == N)
-      return v0_top[i];
+      return v0_top[i - offset_x];
     return v0[index(i, j)];
   }
 
   std::size_t size() const { return Q.size(); }
 
 private:
+  std::size_t nx, ny, offset_x, offset_y;
+
   void build(const Grid2D &grid, const Domain &domain);
 };

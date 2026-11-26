@@ -4,8 +4,8 @@
 #include "problem_data/problem_data.hpp"
 #include "solver/solver.hpp"
 #include "utils/utils.hpp"
-#include <chrono>
 #include <iostream>
+#include <optional>
 
 int main(int argc, char *argv[]) {
   MPI_Init(&argc, &argv);
@@ -15,38 +15,47 @@ int main(int argc, char *argv[]) {
   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
   try {
-    auto config = utils::parseArgs(argc, argv);
-    Grid2D grid(config);
-    Domain domain;
+    const auto parsed = utils::parseArgs(argc, argv);
+    if (!parsed) {
+      if (rank == 0)
+        utils::printUsage();
+      MPI_Finalize();
+      return 0;
+    }
+    const auto &config = *parsed;
+    const Grid2D grid(config);
+    const Domain domain;
 
-    std::unique_ptr<ProblemData> problem;
-    std::unique_ptr<Backend> backend;
-    std::unique_ptr<Decomposition> dec;
-    std::unique_ptr<LocalGeometry> lg;
-
+    std::optional<Decomposition> decomposition;
+    std::optional<LocalGeometry> local_geometry;
     if (config.backend == BackendKind::MPI) {
-      dec = std::make_unique<Decomposition>(
-          make_decomposition(config.M, config.N, num_procs));
-      lg = std::make_unique<LocalGeometry>(
-          make_local_geometry(*dec, rank, config.M, config.N));
-    } else {
-      problem = std::make_unique<ProblemData>(grid, domain);
+      decomposition = make_decomposition(grid.M, grid.N, num_procs);
+      local_geometry =
+          make_local_geometry(*decomposition, rank, grid.M, grid.N);
     }
 
-    backend = makeBackend(config.backend, *problem, lg.get(), MPI_COMM_WORLD);
+    const auto problem = local_geometry
+                             ? ProblemData(grid, domain, *local_geometry)
+                             : ProblemData(grid, domain);
+    const auto backend = makeBackend(
+        config.backend, problem, local_geometry ? &*local_geometry : nullptr,
+        MPI_COMM_WORLD);
     const auto solver = ConjugateGradient(*backend);
 
-    std::vector<double> w(problem->size(), 0);
+    std::vector<double> w(problem.size(), 0.0);
     MPI_Barrier(MPI_COMM_WORLD);
     const double t0 = MPI_Wtime();
     const auto result =
-        solver.solve(problem->B, w, config.delta, config.max_iter);
+        solver.solve(problem.B, w, config.delta, config.max_iter);
     MPI_Barrier(MPI_COMM_WORLD);
     const double t1 = MPI_Wtime();
     const double local_elapsed = t1 - t0;
     double max_elapsed = 0.0;
     MPI_Reduce(&local_elapsed, &max_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0,
                MPI_COMM_WORLD);
+
+    if (decomposition && num_procs > 1)
+      w = gatherSolution(w, *decomposition, grid, MPI_COMM_WORLD);
 
     if (rank == 0) {
       std::cout << (result.converged ? "converged" : "failed to converge")
