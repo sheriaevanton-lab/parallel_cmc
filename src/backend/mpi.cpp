@@ -134,4 +134,3 @@ std::vector<double> gatherSolution(const std::vector<double> &local,
   }
   return solution;
 }
-

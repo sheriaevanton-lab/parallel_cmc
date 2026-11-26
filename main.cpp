@@ -37,9 +37,9 @@ int main(int argc, char *argv[]) {
     const auto problem = local_geometry
                              ? ProblemData(grid, domain, *local_geometry)
                              : ProblemData(grid, domain);
-    const auto backend =
-        makeBackend(config.backend, problem,
-                    local_geometry ? &*local_geometry : nullptr, MPI_COMM_WORLD);
+    const auto backend = makeBackend(
+        config.backend, problem, local_geometry ? &*local_geometry : nullptr,
+        MPI_COMM_WORLD);
     const auto solver = ConjugateGradient(*backend);
 
     std::vector<double> w(problem.size(), 0.0);
