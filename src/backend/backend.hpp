@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cmath>
+#include <optional>
+#include <string>
 #include <vector>
 
 class Backend {
@@ -23,3 +25,15 @@ public:
     return std::sqrt(dot(u, u));
   }
 };
+
+enum class BackendKind { Sequential, OpenMP, MPI };
+
+inline std::optional<BackendKind> parseBackendKind(const std::string &s) {
+  if (s == "seq")
+    return BackendKind::Sequential;
+  if (s == "openmp")
+    return BackendKind::OpenMP;
+  if (s == "mpi")
+    return BackendKind::MPI;
+  return std::nullopt;
+}

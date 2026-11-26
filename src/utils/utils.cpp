@@ -66,9 +66,7 @@ std::vector<double> solveQuadraticInUnitSegment(double a, double b, double c) {
   return roots;
 }
 
-void fail(const std::string &msg) { throw std::runtime_error(msg); }
-
-Config parseArgs(int argc, char *argv[]) {
+std::optional<Config> parseArgs(int argc, char *argv[]) {
   Config config;
   config.M = kM;
   config.N = kN;
@@ -85,14 +83,15 @@ Config parseArgs(int argc, char *argv[]) {
     std::string key = argv[i];
     auto next = [&]() -> std::string {
       if (i + 1 >= argc)
-        fail("missing value for " + key);
+        throw std::runtime_error("missing value for " + key);
       return argv[++i];
     };
 
     if (key == "--backend" || key == "-b") {
       auto k = parseBackendKind(next());
-      if (!k.has_value())
-        fail("unknown backend type");
+      if (!k.has_value()) {
+        throw std::runtime_error("unknown backend type");
+      }
       config.backend = *k;
     } else if (key == "--M")
       config.M = std::stoi(next());
@@ -112,26 +111,32 @@ Config parseArgs(int argc, char *argv[]) {
       config.max_iter = std::stoi(next());
     else if (key == "--output" || key == "-o")
       config.output_path = next();
-    else if (key == "--help" || key == "-h") {
-      std::cout << "usage: prog [options]\n"
-                   "  -b, --backend seq|omp|mpi|hybrid\n"
-                   "      --M <int>   --N <int>\n"
-                   "      --xmin --xmax --ymin --ymax <double>\n"
-                   "      --delta <double>   --max-iter <int>\n"
-                   "  -o, --output <file>\n";
-      std::exit(0);
-    } else
-      fail("unknown option: " + key);
+    else if (key == "--help" || key == "-h")
+      return std::nullopt;
+    else
+      throw std::runtime_error("unknown option: " + key);
   }
 
+  if (config.M < 2 || config.N < 2)
+    throw std::runtime_error("M and N must be at least 2");
+
   return config;
+}
+
+void printUsage() {
+  std::cout << "usage: prog [options]\n"
+               "  -b, --backend seq|openmp|mpi\n"
+               "      --M <int>   --N <int>\n"
+               "      --xmin --xmax --ymin --ymax <double>\n"
+               "      --delta <double>   --max-iter <int>\n"
+               "  -o, --output <file>\n";
 }
 
 void saveSolutionCsv(const std::string &path, const std::vector<double> &w,
                      const Grid2D &grid, const Domain &domain) {
   std::ofstream out(path);
   if (!out)
-    fail("cannot open " + path);
+    throw std::runtime_error("cannot open " + path);
 
   out << std::setprecision(kPrecision);
   out << "x,y,w\n";
